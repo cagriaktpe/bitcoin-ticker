@@ -13,7 +13,7 @@ class _PriceScreenState extends State<PriceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bitcoin Ticker'),
+        title: Text('Coin Ticker'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,6 +40,13 @@ class _PriceScreenState extends State<PriceScreen> {
               ),
             ),
           ),
+          Container(
+            height: 150.0,
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(bottom: 30.0),
+            color: Theme.of(context).colorScheme.primary,
+            child: null,
+          )
         ],
       )
     );
