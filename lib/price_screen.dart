@@ -19,7 +19,10 @@ class _PriceScreenState extends State<PriceScreen> {
     List<DropdownMenuItem<String>> dropdownItems = [];
     for (String currency in currenciesList) {
       var newItem = DropdownMenuItem(
-          child: Text(currency),
+          child: Text(
+              currency,
+              style: TextStyle(color: Colors.white),
+          ),
           value: currency,
       );
       dropdownItems.add(newItem);
@@ -39,7 +42,10 @@ class _PriceScreenState extends State<PriceScreen> {
   CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
     for (String currency in currenciesList) {
-      var newItem = Text(currency);
+      var newItem = Text(
+          currency,
+          style: TextStyle(color: Colors.white),
+      );
       pickerItems.add(newItem);
     }
 
