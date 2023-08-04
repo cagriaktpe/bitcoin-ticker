@@ -1,0 +1,2 @@
+const kBaseURL = 'https://apiv2.bitcoinaverage.com/indices/global/ticker/';
+const kApiKey = 'NWQzYTQyYjA1YmE5NDA2ODg3ZmFkZjU4ZmUzM2YxMDk'; // TODO: Add your own API key here - That's the one I used in the project

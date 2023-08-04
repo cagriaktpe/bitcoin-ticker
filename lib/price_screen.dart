@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:bitcoin_ticker/coin_data.dart';
 import 'dart:io' show Platform;
 
+import 'networking.dart';
+import 'constants.dart';
+
 class PriceScreen extends StatefulWidget {
 
   const PriceScreen({Key? key}) : super(key: key);
@@ -13,8 +16,33 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
 
-  String selectedCurrency = 'USD';
+  Networking networking = Networking();
 
+  String selectedCurrency = 'AUD'; // Default currency
+
+  int bitcoinValue = 0;
+  int ethereumValue = 0;
+  int litecoinValue = 0;
+
+  // Update currency values
+  void updateCurrency(String mainCurrency,String selectedCurrecy) async {
+    String url = '$kBaseURL$mainCurrency$selectedCurrecy';
+    networking.makeGETRequest(url, kApiKey).then((data) {
+      setState(() {
+        if (mainCurrency == 'BTC') {
+          bitcoinValue = data['last'].toInt();
+        } else if (mainCurrency == 'ETH') {
+          ethereumValue = data['last'].toInt();
+        } else if (mainCurrency == 'LTC') {
+          litecoinValue = data['last'].toInt();
+        }
+      });
+    }).catchError((error) {
+      print('Error: $error');
+    });
+  }
+
+  // Android dropdown
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
     for (String currency in currenciesList) {
@@ -28,6 +56,7 @@ class _PriceScreenState extends State<PriceScreen> {
       dropdownItems.add(newItem);
     }
 
+    // Return dropdown
     return DropdownButton<String>(
         value: selectedCurrency,
         items: dropdownItems,
@@ -35,10 +64,15 @@ class _PriceScreenState extends State<PriceScreen> {
           setState(() {
             selectedCurrency = value!;
           });
+
+          updateCurrency('BTC', selectedCurrency);
+          updateCurrency('ETH', selectedCurrency);
+          updateCurrency('LTC', selectedCurrency);
         }
     );
   }
 
+  // iOS picker
   CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
     for (String currency in currenciesList) {
@@ -49,18 +83,34 @@ class _PriceScreenState extends State<PriceScreen> {
       pickerItems.add(newItem);
     }
 
+    // Return picker
     return CupertinoPicker(
         backgroundColor: Colors.lightBlue,
         itemExtent: 32.0,
         onSelectedItemChanged: (selectedIndex) {
-          print(selectedIndex);
+          setState(() {
+            selectedCurrency = currenciesList[selectedIndex];
+          });
+
+          updateCurrency('BTC', selectedCurrency);
+          updateCurrency('ETH', selectedCurrency);
+          updateCurrency('LTC', selectedCurrency);
         },
         children: pickerItems
     );
   }
 
   @override
+  void initState() {
+    super.initState();
+    updateCurrency('BTC', selectedCurrency);
+    updateCurrency('ETH', selectedCurrency);
+    updateCurrency('LTC', selectedCurrency);
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Coin Ticker'),
@@ -79,14 +129,40 @@ class _PriceScreenState extends State<PriceScreen> {
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Theme.of(context).colorScheme.onPrimary
-                  ),
-                ),
+                child: Column(
+                  children: [
+                    Text(
+                        '1 BTC = $bitcoinValue $selectedCurrency',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white
+                        ),
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Text(
+                        '1 ETH = $ethereumValue $selectedCurrency',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white
+                        ),
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Text(
+                        '1 LTC = $litecoinValue $selectedCurrency',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white
+                        ),
+                    ),
+                  ],
+                )
               ),
             ),
           ),
